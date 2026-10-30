@@ -825,3 +825,11 @@ details.fx .inline-form{flex-wrap:wrap}
 .finish .dalil{text-align:left}
 .finish .dalil p.dl-ar{font-size:1.2rem;margin:10px 0 6px;text-align:right}
 .dalil .dl-h{width:100%}
+
+/* Round player: one picture per punch, quick fade and a short forward snap */
+#plFig .imgfig img{transition:opacity 70ms linear}
+#plFig .imgfig.mirror{transform:scaleX(-1)}
+#plFig .imgfig.hit img.on{animation:punchSnap .2s cubic-bezier(.2,.8,.3,1)}
+@keyframes punchSnap{0%{transform:translateX(-2%) scale(.985)}55%{transform:translateX(3%) scale(1.025)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){#plFig .imgfig img{transition:none}#plFig .imgfig.hit img.on{animation:none}}
+.av-coach{background:color-mix(in srgb, #1F44C4 18%, #F3F5F9)}

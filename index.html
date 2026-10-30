@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jurnal Sehat Kita</title>
+<meta name="description" content="Jurnal kesehatan keluarga: latihan, olahraga, dan puasa sunnah, tercatat bersama.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jurnal Sehat Kita">
+<meta property="og:title" content="Jurnal Sehat Kita">
+<meta property="og:description" content="Jurnal kesehatan keluarga: latihan, olahraga, dan puasa sunnah, tercatat bersama.">
+<meta property="og:url" content="https://fitrhj.netlify.app/">
+<meta property="og:image" content="https://fitrhj.netlify.app/img/brand/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo Jurnal Sehat Kita">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jurnal Sehat Kita">
+<meta name="twitter:description" content="Jurnal kesehatan keluarga: latihan, olahraga, dan puasa sunnah, tercatat bersama.">
+<meta name="twitter:image" content="https://fitrhj.netlify.app/img/brand/og.png">
+<meta name="theme-color" content="#0F1D3D">
+<meta name="application-name" content="Jurnal Sehat Kita">
+<link rel="icon" type="image/png" href="img/brand/favicon.png">
+<link rel="apple-touch-icon" href="img/brand/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Jurnal Sehat">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@75..100,400..800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#home"><img class="brand-logo" src="img/brand/logo.webp" alt=""><span class="brand-word">Jurnal Sehat Kita</span></a>
+  <div class="lang" role="group" aria-label="Language"><button data-lang="en">EN</button><button data-lang="id">ID</button></div>
+  <button class="icon-btn" id="themeBtn" aria-label="Light or dark mode"></button>
+  <button class="icon-btn" id="whoBtn" aria-label="Switch person"></button>
+</header>
+
+<main>
+  <section id="v-home" class="view"></section>
+  <section id="v-plan" class="view" hidden></section>
+  <section id="v-workouts" class="view" hidden></section>
+  <section id="v-progress" class="view" hidden></section>
+  <section id="v-me" class="view" hidden></section>
+</main>
+
+<div class="tabs"><nav aria-label="Main" id="tabs"></nav></div>
+
+<div class="sheet" id="picker" hidden role="dialog" aria-modal="true" aria-label="Choose person"><div class="sheet-in" id="pkIn"></div></div>
+<div class="sheet" id="wizard" hidden role="dialog" aria-modal="true" aria-label="Check-up"><div class="sheet-in" id="wzIn"></div></div>
+<div class="sheet" id="settings" hidden role="dialog" aria-modal="true" aria-label="Program settings"><div class="sheet-in" id="stIn"></div></div>
+<div class="sheet" id="actSheet" hidden role="dialog" aria-modal="true" aria-label="Catat aktivitas"><div class="sheet-in" id="acIn"></div></div>
+<div class="sheet" id="builder" hidden role="dialog" aria-modal="true" aria-label="Workout builder"><div class="sheet-in" id="bdIn"></div></div>
+<div class="welcome" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="wcTitle"><div class="welcome-card" id="wcIn"></div></div>
+<div class="run" id="player" data-phase="lift" hidden role="dialog" aria-modal="true" aria-label="Training session"><div class="run-in" id="plIn"></div></div>
+
+<script src="js/core.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/figures.js"></script>
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/dalil_data.js"></script>
+<script src="js/journal.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/player.js"></script>
+<script src="js/workouts.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>

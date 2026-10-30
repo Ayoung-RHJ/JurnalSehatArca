@@ -163,6 +163,8 @@ const ageGroup = a => { a = Number(a) || 30; return a < 13 ? 'kid' : a < 18 ? 't
 const AGEG = { kid:[['Kids','Anak'],'6–12'], teen:[['Teen','Remaja'],'13–17'], adult:[['Adult','Dewasa'],'18–59'], elder:[['Elder','Lansia'],'60+'] };
 const ageLabel = a => { const g = AGEG[ageGroup(a)]; return `${L(g[0])}, ${g[1]}`; };
 const AVIMG = {
+  coach_F:'img/avatars/coach_F.webp',
+  coach_M:'img/avatars/coach_M.webp',
   kid_F:'img/avatars/kid_F.webp',
   kid_M:'img/avatars/kid_M.webp',
   teen_F:'img/avatars/teen_F.webp',
@@ -173,6 +175,7 @@ const AVIMG = {
   elder_M:'img/avatars/elder_M.webp'
 };
 function avatarSVG({ sex = 'male', color = '#1F44C4', coach = false, age = 30 } = {}) {
+  if (coach) return `<span class="av av-img av-coach"><img src="${AVIMG[sex === 'female' ? 'coach_F' : 'coach_M']}" alt="" draggable="false"></span>`;
   if (!coach) return `<span class="av av-img" style="background:color-mix(in srgb, ${color} 22%, #F3F5F9)"><img src="${AVIMG[ageGroup(age) + '_' + (sex === 'female' ? 'F' : 'M')]}" alt="" draggable="false"></span>`;
   const fem = sex === 'female', grp = coach ? 'adult' : ageGroup(age), skin = '#C68A5E', ol = '#0F1D3D';
   const hair = grp === 'elder' ? '#D5DAE3' : '#231A15';

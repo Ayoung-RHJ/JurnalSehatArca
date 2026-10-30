@@ -215,7 +215,8 @@ const FRAME = { stand:'600 / 680', floor:'660 / 360' };
 const LYING_EX = ['bridge','floor_press','pushup','pullover','deadbug','plank'];
 const straight2 = p => p && p.hit > .55 && p.hh === 2 && p.a2 && Math.abs(p.a2[1]) < 25 ? 'cross' : 'guard';
 const IMGMAP = {
-  'scene:fight':[straight2, ['guard','cross']], 'scene:welcome':[straight2, ['guard','cross']],
+  'scene:fight':[() => 'box_pivot', ['box_pivot','box_jab','cross','box_leadhook','box_rearhook','box_leadupper','box_rearupper','def_slip','def_roll','def_back']],
+  'scene:welcome':[straight2, ['guard','cross']],
   'move:stance':[() => 'guard', ['guard']], 'move:bounce':[straight2, ['guard','cross']], 'move:balloon':[straight2, ['guard','cross']],
   'punch:2':[straight2, ['guard','cross']], 'scene:rest':[() => 'stand', ['stand']]
 };
@@ -248,7 +249,18 @@ class ImgFig {
     host.appendChild(d); this.draw(null);
   }
   draw(p) { const k = this.pick(p); if (k === this.cur) return; this.cur = k; Object.keys(this.els).forEach(n => this.els[n].classList.toggle('on', n === k)); }
+  /* Show one picture straight away; hit adds a short forward snap so a punch reads as movement */
+  show(k, hit) {
+    if (!this.els[k]) return;
+    if (k !== this.cur) { this.cur = k; Object.keys(this.els).forEach(n => this.els[n].classList.toggle('on', n === k)); }
+    const d = this.svg; d.classList.remove('hit'); if (hit && MOTION) { void d.offsetWidth; d.classList.add('hit'); }
+  }
 }
+/* Picture for each punch in the round player */
+const PUNCH_IMG = { 1:'box_jab', 2:'cross', 3:'box_leadhook', 4:'box_rearhook', 5:'box_leadupper', 6:'box_rearupper', slip:'def_slip', roll:'def_roll', back:'def_back', pivot:'box_pivot' };
+const GUARD_IMG = 'box_pivot';
+/* Decode the round pictures before the bell so the first punch never shows a blank */
+function warmFigs(keys) { keys.forEach(k => { if (!FIGIMG[k]) return; const im = new Image(); im.src = FIGIMG[k]; if (im.decode) im.decode().catch(() => {}); }); }
 const makeFig = (host, label, deco, key, glow) => key && IMGMAP[key] ? new ImgFig(host, label, key, glow) : new Fig(host, label, deco);
 
 /* =========================================================
@@ -275,7 +287,7 @@ const SEAT = { t:-30, l1:[125,95], l2:[125,95] };
 const CEL1 = P({ v:'f', a1:[160,15], a2:[160,15], l1:[6,0], l2:[6,0], gl:1 });
 const CEL2 = P({ v:'f', a1:[145,35], a2:[170,0], l1:[10,0], l2:[3,0], gl:1 });
 
-const PUNCH = { 1:['Jab','Jab'], 2:['Cross','Cross'], 3:['Lead hook','Hook depan'], 4:['Rear hook','Hook belakang'], 5:['Lead uppercut','Uppercut depan'], 6:['Rear uppercut','Uppercut belakang'],
+const PUNCH = { 1:['Jab','Jab'], 2:['Straight','Straight'], 3:['Lead hook','Hook depan'], 4:['Rear hook','Hook belakang'], 5:['Lead uppercut','Uppercut depan'], 6:['Rear uppercut','Uppercut belakang'],
   slip:['Slip','Slip'], roll:['Roll','Roll'], back:['Step back','Mundur'], pivot:['Pivot','Pivot'] };
 const PUNCH_HOW = {
   1:['Snap your lead hand straight out, turn the fist over at the end, and bring it straight back to your cheek.','Lontarkan tangan depan lurus, putar kepalan di ujung, lalu tarik kembali lurus ke pipi.'],

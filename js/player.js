@@ -35,6 +35,7 @@ function startSession(type, given) {
   audio(); keepAwake(true);
   const ses = given || buildSession(type, fastAdj(PROF, new Date()), weekNo());
   S = { ses, steps:flatten(ses), i:0, el:0, paused:false, last:performance.now(), fig:null, anim:null, timers:[], log:{ sets:0, rounds:0 }, started:Date.now(), logged:false };
+  if (S.steps.some(x => x.k === 'round')) warmFigs(IMGMAP['scene:fight'][1]);
   PL.hidden = false; document.body.classList.add('locked');
   renderStep();
 }
@@ -78,6 +79,7 @@ function renderStep() {
       <div class="clock big" id="plClock">${fmt(st.len)}</div><div class="combo" id="plCombo" aria-live="polite"><div class="msg">${tt('Round','Ronde')} ${st.r}</div></div>
       ${coachLine()}<div class="ctrl"><button data-pl="pause">${tt('Pause','Jeda')}</button><button data-pl="skip">${tt('Skip','Lewati')}</button><button data-pl="end">${tt('End','Selesai')}</button></div>`;
     setFig($('#plFig'), IDLE, 230, 40, 'scene:fight');
+    if (S.fig && S.fig.svg) S.fig.svg.classList.toggle('mirror', PROF.stance === 'southpaw');
     bell(1);
   } else if (st.k === 'brest' || st.k === 'rest') {
     PL.dataset.phase = 'rest';
@@ -137,20 +139,40 @@ function callCombo(st) {
   combo.innerHTML = chipsFor(parts);
   if (PROF.calls === 'numbers') say(parts.map(p => isNaN(p) ? L(PUNCH[p]) : p).join(', '), { rate:1.15, quiet:true });
   else if (PROF.calls === 'names') say(parts.map(p => L(PUNCH[p])).join(', '), { rate:1.15, quiet:true });
-  const seg = st.b.level === 'beginner' ? 280 : 230, hold = st.b.level === 'beginner' ? 180 : 130, per = seg + hold;
-  const frames = [GUARD]; parts.forEach(p => { frames.push(PZ[p]); frames.push(GUARD); });
-  stopAnim(S.anim); S.anim = play(new Anim(S.fig, frames, seg, hold, false));
-  S.animEnd = performance.now() + S.anim.dur + 150;
   clearTimers();
-  parts.forEach((p, i) => {
-    S.timers.push(setTimeout(() => {
-      if (!S || S.steps[S.i] !== st) return;
-      combo.querySelectorAll('.chip').forEach(ch => ch.classList.toggle('now', ch.dataset.ci === String(i)));
-      const f = $('#plFeet'); if (f) f.innerHTML = feetSVG(PROF.stance, PIV[p]);
-    }, (2 * i) * per + hold));
-  });
-  S.timers.push(setTimeout(() => { if (!S || S.steps[S.i] !== st) return; combo.querySelectorAll('.chip').forEach(ch => ch.classList.remove('now')); const f = $('#plFeet'); if (f) f.innerHTML = feetSVG(PROF.stance); }, S.anim.dur + 100));
-  S.nextCall = S.el + Math.max(st.b.pace * 1000, S.anim.dur + 700) + (Math.random() * 1000 - 500);
+  const chipsOff = () => { combo.querySelectorAll('.chip').forEach(ch => ch.classList.remove('now')); const f = $('#plFeet'); if (f) f.innerHTML = feetSVG(PROF.stance); };
+  let total;
+  if (S.fig && S.fig.show) {
+    /* Picture sequencer: one picture per punch at the pace of the call, the chip and feet change at the same moment */
+    const step = { beginner:600, intermediate:480 }[st.b.level] || 420, lead = 200, hitFor = Math.round(step * .62);
+    stopAnim(S.anim); S.anim = null; S.fig.show(GUARD_IMG);
+    parts.forEach((p, i) => {
+      const t = lead + i * step;
+      S.timers.push(setTimeout(() => {
+        if (!S || S.steps[S.i] !== st) return;
+        S.fig.show(PUNCH_IMG[p] || GUARD_IMG, true);
+        combo.querySelectorAll('.chip').forEach(ch => ch.classList.toggle('now', ch.dataset.ci === String(i)));
+        const f = $('#plFeet'); if (f) f.innerHTML = feetSVG(PROF.stance, PIV[p]);
+      }, t));
+      S.timers.push(setTimeout(() => { if (S && S.steps[S.i] === st) S.fig.show(GUARD_IMG); }, t + hitFor));
+    });
+    total = lead + parts.length * step;
+    S.timers.push(setTimeout(() => { if (S && S.steps[S.i] === st) chipsOff(); }, total + 100));
+  } else {
+    const seg = st.b.level === 'beginner' ? 280 : 230, hold = st.b.level === 'beginner' ? 180 : 130, per = seg + hold;
+    const frames = [GUARD]; parts.forEach(p => { frames.push(PZ[p]); frames.push(GUARD); });
+    stopAnim(S.anim); S.anim = play(new Anim(S.fig, frames, seg, hold, false)); total = S.anim.dur;
+    parts.forEach((p, i) => {
+      S.timers.push(setTimeout(() => {
+        if (!S || S.steps[S.i] !== st) return;
+        combo.querySelectorAll('.chip').forEach(ch => ch.classList.toggle('now', ch.dataset.ci === String(i)));
+        const f = $('#plFeet'); if (f) f.innerHTML = feetSVG(PROF.stance, PIV[p]);
+      }, (2 * i) * per + hold));
+    });
+    S.timers.push(setTimeout(() => { if (S && S.steps[S.i] === st) chipsOff(); }, total + 100));
+  }
+  S.animEnd = performance.now() + total + 150;
+  S.nextCall = S.el + Math.max(st.b.pace * 1000, total + 700) + (Math.random() * 1000 - 500);
 }
 function finishSet() { S.log.sets++; ding(); next(); }
 
@@ -174,7 +196,9 @@ function ptick() {
     if (rem <= 30 && rem > 20 && !S.late && st.len > 60) { S.late = 1; S.nextCall = el + 2600; say(line('late')); }
     if (st.b.burn && rem <= 20 && !S.burn) {
       S.burn = 1; clearTimers(); $('#plCombo').innerHTML = `<div class="msg">${tt('Burnout! Fast 1-2s to the bell','Burnout! 1-2 cepat sampai bel')}</div>`; say(tt('Burnout! Fast one twos!','Burnout! Satu dua cepat!'));
-      stopAnim(S.anim); S.animEnd = 0; S.anim = play(new Anim(S.fig, [GUARD, PZ['1'], GUARD, PZ['2']], 120, 30));
+      stopAnim(S.anim); S.animEnd = 0;
+      if (S.fig && S.fig.show) { let n = 0; S.anim = null; S.timers.push(setInterval(() => { if (!S || S.paused) return; S.fig.show(PUNCH_IMG[n++ % 2 ? 2 : 1], true); }, 260)); }
+      else S.anim = play(new Anim(S.fig, [GUARD, PZ['1'], GUARD, PZ['2']], 120, 30));
     }
     if (!S.burn && el >= S.nextCall && rem > 2.5) {
       const gap = { calm:28000, steady:20000, hard:14000 }[S.ses.gentle ? 'calm' : (PROF.push || 'steady')];

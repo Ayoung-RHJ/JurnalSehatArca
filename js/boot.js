@@ -3,11 +3,11 @@
    ========================================================= */
 const WELCOME = {
   id:{ t:'Selamat datang di Jurnal Sehat Kita!', p:[
-    'Jurnal Sehat Kita hadir untuk seluruh keluarga: ayah, ibu, kakek, nenek, sampai si kecil. Di sini kita bergerak bersama agar tubuh tetap bugar, hati tetap gembira, dan pikiran tetap jernih. Catat latihan, olahraga, dan puasa sunnah, lalu saling menyemangati.',
+    'Jurnal Sehat Kita hadir untuk seluruh keluarga: pupu, mamah, kakek, nenek, poo sampai xumxum. Di sini kita bergerak bersama agar tubuh tetap bugar, hati tetap gembira, dan pikiran tetap jernih. Catat latihan, olahraga, dan puasa sunnah, lalu saling menyemangati.',
     'Kami percaya kesehatan yang baik adalah awal dari hidup yang sejahtera. Tubuh yang kuat membuat pikiran lebih cerah, semangat lebih besar, dan setiap hari terasa lebih bermakna.',
     'Mulailah dari langkah kecil, lakukan bersama, dan rayakan setiap kemajuan. Ayo sehat bersama keluarga!'], b:'Mulai bersama' },
   en:{ t:'Welcome to Jurnal Sehat Kita!', p:[
-    'Jurnal Sehat Kita is here for the whole family: dad, mom, grandpa, grandma, all the way down to the little ones. Here we move together so our bodies stay fit, our hearts stay happy and our minds stay clear. Log workouts, sport and Sunnah fasts, and cheer each other on.',
+    'Jurnal Sehat Kita is here for the whole family: dad, mom, grandpa, grandma, aunty all the way down to the little ones. Here we move together so our bodies stay fit, our hearts stay happy and our minds stay clear. Log workouts, sport and Sunnah fasts, and cheer each other on.',
     'We believe good health is where a good life begins. A strong body brightens the mind, lifts the spirit and makes every day feel more meaningful.',
     'Start with small steps, do it together and celebrate every bit of progress. Let’s get healthy as a family!'], b:'Start together' }
 };

@@ -840,3 +840,34 @@ details.fx .inline-form{flex-wrap:wrap}
 .figbox.has-vid{background:#EEF2F5;overflow:hidden}
 .vidfig{display:block;width:100%;aspect-ratio:600 / 680;object-fit:contain;background:#EEF2F5;border-radius:inherit;cursor:pointer}
 .vidfig.tall{aspect-ratio:464 / 640}
+/* Boxing punch cards: movement on the left, muscles or footwork on the right */
+.pduo{grid-template-columns:3fr 2fr;align-items:stretch}
+.pside{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pseg{display:flex;gap:4px;margin:0}
+.pseg button{flex:1;min-height:36px;font-size:.85rem;padding:4px 6px}
+.pside-v{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:var(--r-sm);min-height:140px;overflow:hidden}
+.pside-v[hidden]{display:none}
+.pside-v img{width:100%;height:100%;object-fit:contain;max-height:230px}
+.pside-v .feet{max-width:100%}
+/* Punch cards: Gerakan / Otot / Kaki in one big area */
+.ptabs{display:flex;gap:4px;margin:0 0 8px}
+.ptabs button{flex:1;min-height:40px;font-size:.9rem;padding:4px 6px}
+.pview{aspect-ratio:464 / 640;max-height:420px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:var(--r-sm);overflow:hidden}
+.pview[hidden]{display:none}
+.pview>.figbox{width:100%;height:100%;background:transparent}
+.pview>.figbox .imgfig,.pview>.figbox .vidfig{width:100%;height:100%;max-height:none}
+.pview img{width:100%;height:100%;object-fit:contain}
+.fwbox{margin:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 10px;gap:4px}
+.fw{width:100%;max-height:72%;height:auto;display:block}
+.fw .shoe{fill:#F4F5F7;stroke:#14203A;stroke-width:1.8}
+.fw .shoe.lit{fill:#FFE27A}
+.fw .heel-up{fill:var(--hol, #B07A00)}
+.fw .wdot{fill:var(--accent);fill-opacity:.85;stroke:#fff;stroke-width:2}
+.fw .dash{stroke:currentColor;opacity:.35;stroke-width:2;stroke-dasharray:4 4}
+.fw text{fill:currentColor;font:600 11px var(--body);opacity:.85}
+.fw .fwd{opacity:.4;font-size:12px}
+.fwbox figcaption{font-size:.9rem;font-weight:600;text-align:center;line-height:1.35}
+.fw-key{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;margin:0;font-size:.75rem;color:var(--muted)}
+.fw-key span{display:inline-flex;align-items:center;gap:5px}
+.fw-key i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.k-dot{background:var(--accent)}.k-heel{background:var(--hol, #B07A00)}.k-lit{background:#FFE27A;border:1px solid #14203A;border-radius:3px!important}

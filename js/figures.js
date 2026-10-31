@@ -213,12 +213,12 @@ const poseDist = (p, q) => POSE_KEYS.reduce((s, k) => s + (Array.isArray(p[k]) ?
 const twoFrame = id => p => !p ? id + '_a' : (poseDist(p, EX[id].f[0]) <= poseDist(p, EX[id].f[1]) ? id + '_a' : id + '_b');
 const FRAME = { stand:'600 / 680', floor:'660 / 360' };
 const LYING_EX = ['bridge','floor_press','pushup','pullover','deadbug','plank'];
-const straight2 = p => p && p.hit > .55 && p.hh === 2 && p.a2 && Math.abs(p.a2[1]) < 25 ? 'cross' : 'guard';
+const straight2 = p => p && p.hit > .55 && p.hh === 2 && p.a2 && Math.abs(p.a2[1]) < 25 ? 'cross' : GUARD_IMG;
 const IMGMAP = {
   'scene:fight':[() => 'box_pivot', ['box_pivot','box_jab','cross','box_leadhook','box_rearhook','box_leadupper','box_rearupper','def_slip','def_roll','def_back']],
-  'scene:welcome':[straight2, ['guard','cross']],
-  'move:stance':[() => 'guard', ['guard']], 'move:bounce':[straight2, ['guard','cross']], 'move:balloon':[straight2, ['guard','cross']],
-  'punch:2':[straight2, ['guard','cross']], 'scene:rest':[() => 'stand', ['stand']]
+  'scene:welcome':[straight2, ['box_pivot','cross']],
+  'move:stance':[() => 'box_pivot', ['box_pivot']], 'move:bounce':[straight2, ['box_pivot','cross']], 'move:balloon':[straight2, ['box_pivot','cross']],
+  'punch:2':[straight2, ['box_pivot','cross']], 'scene:rest':[() => 'stand', ['stand']]
 };
 ['goblet','rdl','lunge','bridge','calf','swing','thruster','pushup','press','lateral','tri_oh',
   'curl','farmer','hammer','pullover','row1','rowbent','deadbug','plank','twist'].forEach(id => {

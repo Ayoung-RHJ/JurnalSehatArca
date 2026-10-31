@@ -236,7 +236,8 @@ IMGMAP['move:hero'] = [twoFrame('plank'), ['plank_a','plank_b'], FRAME.floor, tr
 IMGMAP['move:bug'] = [twoFrame('deadbug'), ['deadbug_a','deadbug_b'], FRAME.floor, true];
 IMGMAP['scene:celebrate'] = [() => 'celebrate', ['celebrate'], FRAME.stand];
 /* Real-movement videos for the Latihan cards (AI-generated from our own pictures, about 50-130 KB each) */
-const VIDMAP = { 'punch:1':'vid_jab', 'punch:2':'vid_straight', 'ex:goblet':'vid_goblet', 'move:march':'vid_march' };
+const VIDMAP = { 'punch:1':'vid_jab', 'punch:2':'vid_straight', 'punch:3':'vid_leadhook', 'punch:5':'vid_leadupper',
+  'punch:slip':'vid_slip', 'punch:roll':'vid_roll', 'ex:goblet':'vid_goblet', 'move:march':'vid_march' };
 const vidObs = 'IntersectionObserver' in window ? new IntersectionObserver(ents => ents.forEach(en => {
   const v = en.target;
   if (en.isIntersecting) { if (!v.src) v.src = v.dataset.src; if (MOTION && !v.dataset.paused) v.play().catch(() => {}); }

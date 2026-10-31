@@ -235,17 +235,27 @@ const twoMove = (id, a, b) => p => !p ? a : (poseDist(p, MOVES[id].f[0]) <= pose
 IMGMAP['move:hero'] = [twoFrame('plank'), ['plank_a','plank_b'], FRAME.floor, true];
 IMGMAP['move:bug'] = [twoFrame('deadbug'), ['deadbug_a','deadbug_b'], FRAME.floor, true];
 IMGMAP['scene:celebrate'] = [() => 'celebrate', ['celebrate'], FRAME.stand];
+/* Setup wizard and goal pictures (the ruler and heartbeat drawings sit on top of the photo) */
+IMGMAP['scene:about'] = [() => 'stand', ['stand'], FRAME.stand];
+IMGMAP['scene:health'] = [twoMove('breathe', 'mv_breathe_a', 'mv_breathe_b'), ['mv_breathe_a','mv_breathe_b'], FRAME.stand, true];
+IMGMAP['scene:exp'] = [twoFrame('goblet'), ['goblet_a','goblet_b'], FRAME.stand, true];
+IMGMAP['goal:fat'] = [twoMove('jacks', 'mv_jacks_a', 'mv_jacks_b'), ['mv_jacks_a','mv_jacks_b'], FRAME.stand, true];
+IMGMAP['goal:muscle'] = [twoFrame('curl'), ['curl_a','curl_b'], FRAME.stand, true];
+IMGMAP['goal:fight'] = [straight2, ['box_pivot','cross']];
+IMGMAP['goal:learn'] = [() => 'box_pivot', ['box_pivot']];
+IMGMAP['goal:health'] = [twoMove('sidereach', 'mv_sidereach_a', 'mv_sidereach_b'), ['mv_sidereach_a','mv_sidereach_b'], FRAME.stand, true];
 /* Defence moves in the punch guide (single photo each, glow version shows the working muscles) */
 ['slip','roll','back'].forEach(id => { IMGMAP['punch:' + id] = [() => 'def_' + id, ['def_' + id]]; });
 /* Punch guide photos (single picture each; the glow version shows the working muscles). */
 [['1','box_jab'],['3','box_leadhook'],['4','box_rearhook'],['5','box_leadupper'],['6','box_rearupper'],['pivot','box_pivot']].forEach(([id, n]) => { IMGMAP['punch:' + id] = [() => n, [n]]; });
 class ImgFig {
-  constructor(host, label, key, glow) {
+  constructor(host, label, key, glow, deco) {
     const [pick, keys, ratio, ease] = IMGMAP[key]; this.pick = pick; this.cur = null; this.els = {};
     const d = this.svg = document.createElement('div'); d.className = 'imgfig' + (ease ? ' ease' : '') + (ratio === FRAME.floor ? ' wide' : '');
     if (ratio) d.style.aspectRatio = ratio;
     if (label) { d.setAttribute('role', 'img'); d.setAttribute('aria-label', label); } else d.setAttribute('aria-hidden', 'true');
     keys.forEach(k => { const im = document.createElement('img'); im.src = glow && FIGIMG[k + '_glow'] ? FIGIMG[k + '_glow'] : FIGIMG[k]; im.alt = ''; im.decoding = 'async'; im.draggable = false; d.appendChild(im); this.els[k] = im; });
+    if (deco) { const o = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); o.setAttribute('viewBox', '0 0 220 220'); o.setAttribute('class', 'deco'); o.setAttribute('aria-hidden', 'true'); o.innerHTML = /class="ecg"/.test(deco) ? `<g transform="translate(14 0)">${deco}</g>` : deco.replace('M48 54 l14 -7 v14z', 'M48 18 l14 -7 v14z').replace('y1="34" x2="28"', 'y1="8" x2="28"'); d.appendChild(o); }
     host.appendChild(d); this.draw(null);
   }
   draw(p) { const k = this.pick(p); if (k === this.cur) return; this.cur = k; Object.keys(this.els).forEach(n => this.els[n].classList.toggle('on', n === k)); }
@@ -261,7 +271,7 @@ const PUNCH_IMG = { 1:'box_jab', 2:'cross', 3:'box_leadhook', 4:'box_rearhook', 
 const GUARD_IMG = 'box_pivot';
 /* Decode the round pictures before the bell so the first punch never shows a blank */
 function warmFigs(keys) { keys.forEach(k => { if (!FIGIMG[k]) return; const im = new Image(); im.src = FIGIMG[k]; if (im.decode) im.decode().catch(() => {}); }); }
-const makeFig = (host, label, deco, key, glow) => key && IMGMAP[key] ? new ImgFig(host, label, key, glow) : new Fig(host, label, deco);
+const makeFig = (host, label, deco, key, glow) => key && IMGMAP[key] ? new ImgFig(host, label, key, glow, deco) : new Fig(host, label, deco);
 
 /* =========================================================
    Poses

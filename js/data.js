@@ -156,6 +156,46 @@ function feetSVG(st, piv) {
     <text x="110" y="144" text-anchor="middle">${piv ? tt('Pivot on the lit foot','Putar di kaki yang menyala') : tt('Red dot: heel up','Titik merah: tumit naik')}</text></svg>`;
 }
 
+/* Animated footwork, seen from above (forward = up). Lead foot at the top, rear foot at the bottom.
+   Each punch loops: rest, move, hold, back. SMIL so the pivot point is exact; reduced motion shows the end position. */
+const FW = {
+  //   lead foot [rotate, forward step], rear foot [rotate, forward step, heel up], weight dot target (0 = middle, 1 = lead foot), dip
+  1:{ lead:[0, 10], rear:[0, 4, 0], w:.35, dip:0, cue:['Front foot steps a little forward, then back.','Kaki depan melangkah sedikit ke depan, lalu kembali.'] },
+  2:{ lead:[0, 0], rear:[-40, 0, 1], w:.75, dip:0, cue:['Back heel lifts and turns out. Weight moves forward.','Tumit belakang naik dan berputar keluar. Berat badan pindah ke depan.'] },
+  3:{ lead:[45, 0], rear:[0, 0, 0], w:-.2, dip:0, cue:['Front foot turns on the ball, heel swings out.','Kaki depan berputar di ujung telapak, tumit berayun keluar.'] },
+  4:{ lead:[0, 0], rear:[-50, 0, 1], w:.7, dip:0, cue:['Back heel lifts and turns out hard. Hips turn with it.','Tumit belakang naik dan berputar kuat. Pinggul ikut berputar.'] },
+  5:{ lead:[20, 0], rear:[0, 0, 0], w:.4, dip:1, cue:['Knees dip, then drive up. Front foot turns a little.','Lutut sedikit turun, lalu dorong ke atas. Kaki depan sedikit berputar.'] },
+  6:{ lead:[0, 0], rear:[-30, 0, 1], w:.6, dip:1, cue:['Knees dip, back heel lifts and turns, then drive up.','Lutut sedikit turun, tumit belakang naik dan berputar, lalu dorong ke atas.'] }
+};
+function footAnim(st, n) {
+  const f = FW[n], m = st === 'southpaw' ? -1 : 1, still = !MOTION;
+  const lead = st === 'southpaw' ? tt('right','kanan') : tt('left','kiri'), rear = st === 'southpaw' ? tt('left','kiri') : tt('right','kanan');
+  const KT = '0;0.2;0.45;0.75;1', DUR = '1.8s';
+  const L1 = [72, 78, 18], R1 = [128, 168, 42];                      // x, y, base angle
+  const turn = (deg, step) => still ? (deg ? `<g transform="rotate(${deg} 0 -15)">` : '<g>') + (step ? `<g transform="translate(0 ${-step})">` : '<g>')
+    : `<g><animateTransform attributeName="transform" type="rotate" values="0 0 -15;0 0 -15;${deg} 0 -15;${deg} 0 -15;0 0 -15" keyTimes="${KT}" dur="${DUR}" repeatCount="indefinite"/>`
+      + `<g><animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 ${-step};0 ${-step};0 0" keyTimes="${KT}" dur="${DUR}" repeatCount="indefinite"/>`;
+  const shoe = (lit, heel) => `<path class="shoe${lit ? ' lit' : ''}" d="${SHOE}" transform="scale(1.45)"/>`
+    + (heel ? `<circle class="heel-up" cy="20" r="6"${still ? '' : ' opacity="0"'}>${still ? '' : `<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="${KT}" dur="${DUR}" repeatCount="indefinite"/>`}</circle>` : '');
+  const dip = f.dip ? (still ? '' : `<animateTransform attributeName="transform" type="scale" additive="sum" values="1;1;.9;1.04;1" keyTimes="${KT}" dur="${DUR}" repeatCount="indefinite"/>`) : '';
+  const mid = [(L1[0] + R1[0]) / 2, (L1[1] + R1[1]) / 2], to = [mid[0] + (L1[0] - mid[0]) * f.w * 2 * .5, mid[1] + (L1[1] - mid[1]) * f.w * 2 * .5];
+  const dot = still ? `<circle class="wdot" cx="${to[0]}" cy="${to[1]}" r="9"/>`
+    : `<circle class="wdot" cx="${mid[0]}" cy="${mid[1]}" r="9"><animate attributeName="cx" values="${mid[0]};${mid[0]};${to[0]};${to[0]};${mid[0]}" keyTimes="${KT}" dur="${DUR}" repeatCount="indefinite"/><animate attributeName="cy" values="${mid[1]};${mid[1]};${to[1]};${to[1]};${mid[1]}" keyTimes="${KT}" dur="${DUR}" repeatCount="indefinite"/></circle>`;
+  const foot = ([x, y, a], [deg, step, heel], lit) => `<g transform="translate(${x} ${y}) rotate(${a})"><g>${dip}${turn(deg, step)}${shoe(lit, heel)}</g></g></g></g>`;
+  return `<figure class="fwbox"><svg class="fw" viewBox="0 0 200 250" role="img" aria-label="${tt('Footwork from above','Gerakan kaki dilihat dari atas')}: ${esc(L(f.cue))}">
+    <g transform="translate(${m < 0 ? 200 : 0} 0) scale(${m} 1)">
+      <line class="dash" x1="${L1[0]}" y1="${L1[1]}" x2="${R1[0]}" y2="${R1[1]}"/>
+      ${foot(L1, [f.lead[0], f.lead[1], 0], !!(f.lead[0] || f.lead[1]))}
+      ${foot(R1, f.rear, !!(f.rear[0] || f.rear[1]))}
+      ${dot}
+    </g>
+    <text x="${m > 0 ? 18 : 182}" y="24" text-anchor="${m > 0 ? 'start' : 'end'}">${tt('Front','Depan')} · ${lead}</text>
+    <text x="${m > 0 ? 182 : 18}" y="236" text-anchor="${m > 0 ? 'end' : 'start'}">${tt('Back','Belakang')} · ${rear}</text>
+    <text class="fwd" x="100" y="16" text-anchor="middle">▲</text>
+  </svg><figcaption>${L(f.cue)}</figcaption>
+  <p class="fw-key"><span><i class="k-dot"></i>${tt('Body weight','Berat badan')}</span><span><i class="k-heel"></i>${tt('Heel up','Tumit naik')}</span><span><i class="k-lit"></i>${tt('Foot that moves','Kaki yang bergerak')}</span></p></figure>`;
+}
+
 /* Illustrated people: profiles and coaches */
 /* Illustrated people: profile avatars by age group, plus coaches */
 const PCOLORS = ['#1F44C4','#0F1D3D','#5B7BE0','#7D8AA6','#2A63D9','#3B4F86'];

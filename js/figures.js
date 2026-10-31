@@ -289,6 +289,19 @@ class ImgFig {
 /* Picture for each punch in the round player */
 const PUNCH_IMG = { 1:'box_jab', 2:'cross', 3:'box_leadhook', 4:'box_rearhook', 5:'box_leadupper', 6:'box_rearupper', slip:'def_slip', roll:'def_roll', back:'def_back', pivot:'box_pivot' };
 const GUARD_IMG = 'box_pivot';
+/* Muscles each punch works: [main, helping] (same names as the dumbbell cards) */
+const PMUS = { 1:[['shoulders','triceps'],['obliques']], 2:[['shoulders','chest','triceps'],['obliques','calves']],
+  3:[['shoulders','chest'],['obliques']], 4:[['shoulders','chest'],['obliques','calves']],
+  5:[['biceps','shoulders'],['obliques','quads']], 6:[['biceps','shoulders'],['obliques','quads']] };
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-ptab]'); if (!b) return;
+  const card = b.closest('.ptab-card'), v = b.dataset.ptab;
+  card.querySelectorAll('[data-ptab]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  card.querySelectorAll('[data-pv]').forEach(x => { x.hidden = x.dataset.pv !== v; });
+  const vid = card.querySelector('video');
+  if (vid) { if (v === 'gerak') { if (MOTION && !vid.dataset.paused) { if (!vid.src) vid.src = vid.dataset.src; vid.play().catch(() => {}); } } else vid.pause(); }
+  const fw = card.querySelector('.fw'); if (fw && fw.setCurrentTime && v === 'kaki') fw.setCurrentTime(0);
+});
 /* Decode the round pictures before the bell so the first punch never shows a blank */
 function warmFigs(keys) { keys.forEach(k => { if (!FIGIMG[k]) return; const im = new Image(); im.src = FIGIMG[k]; if (im.decode) im.decode().catch(() => {}); }); }
 const makeFig = (host, label, deco, key, glow) => key && IMGMAP[key] ? new ImgFig(host, label, key, glow, deco) : new Fig(host, label, deco);

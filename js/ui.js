@@ -480,9 +480,15 @@ function renderLearn() {
     <h2 class="h2">${tt('Stance','Kuda-kuda')}</h2>
     <div class="card"><div class="duo">${figHost('move', 'stance', L(MOVES.stance.n), '', true)}${feetSVG(st)}</div><p>${L(MOVES.stance.cue)}</p><p class="small">${tt('You box','Kamu memakai')} ${st}. ${tt('Change this in Me.','Ubah di menu Saya.')}</p></div>
     <h2 class="h2">${tt('Punches','Pukulan')}</h2><p class="lede">${tt('Coaches call combos by number. Odd numbers are your lead hand, even numbers your rear hand.','Pelatih memanggil kombo dengan angka. Angka ganjil untuk tangan depan, angka genap untuk tangan belakang.')}</p>
-    <div class="cards">${[1,2,3,4,5,6].map(n => `<div class="card"><div class="duo">${figHost('punch', n, L(PUNCH[n]), '', n === 2 || !!IMGMAP['punch:' + n])}${feetSVG(st, PIV[n])}</div>
+    <div class="cards">${[1,2,3,4,5,6].map(n => { const gk = (n === 2 ? 'cross' : PUNCH_IMG[n]) + '_glow';
+      return `<div class="card ptab-card"><div class="seg ptabs" role="group" aria-label="${tt('Show','Tampilkan')}">
+          <button data-ptab="gerak" aria-pressed="true">${tt('Movement','Gerakan')}</button><button data-ptab="otot" aria-pressed="false">${tt('Muscles','Otot')}</button><button data-ptab="kaki" aria-pressed="false">${tt('Feet','Kaki')}</button></div>
+        <div class="pview" data-pv="gerak">${figHost('punch', n, L(PUNCH[n]))}</div>
+        <div class="pview" data-pv="otot" hidden>${FIGIMG[gk] ? `<img src="${FIGIMG[gk]}" alt="${tt('Muscles used','Otot yang bekerja')}: ${PMUS[n][0].map(x => L(MNAME[x])).join(', ')}" loading="lazy">` : ''}</div>
+        <div class="pview" data-pv="kaki" hidden>${footAnim(st, n)}</div>
       <div class="h3" style="margin-top:8px"><span class="num-badge">${n}</span>${L(PUNCH[n])} <svg class="path" viewBox="0 0 56 30" aria-hidden="true"><path d="${PATH[n]}"/></svg></div>
-      <p class="small">${tt('Your','Tangan')} ${hand(n)} ${tt('hand','')}</p><p>${L(PUNCH_HOW[n])}</p></div>`).join('')}</div>
+      ${mmKey(PMUS[n][0], PMUS[n][1])}
+      <p class="small">${tt('Your','Tangan')} ${hand(n)} ${tt('hand','')}</p><p>${L(PUNCH_HOW[n])}</p></div>`; }).join('')}</div>
     <h2 class="h2">${tt('Defence','Bertahan')}</h2>
     <div class="cards">${['slip','roll','back','pivot'].map(k => `<div class="card">${figHost('punch', k, L(PUNCH[k]), '', !!IMGMAP['punch:' + k])}<div class="h3" style="margin-top:8px">${L(PUNCH[k])}</div><p>${L(PUNCH_HOW[k])}</p></div>`).join('')}</div>
     ${isKid() ? '' : groups.map(([g, label]) => `<h2 class="h2">${L(label)}</h2><div class="cards">${Object.keys(EX).filter(k => EX[k].g === g).map(k => { const e = EX[k];

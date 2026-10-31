@@ -235,6 +235,26 @@ const twoMove = (id, a, b) => p => !p ? a : (poseDist(p, MOVES[id].f[0]) <= pose
 IMGMAP['move:hero'] = [twoFrame('plank'), ['plank_a','plank_b'], FRAME.floor, true];
 IMGMAP['move:bug'] = [twoFrame('deadbug'), ['deadbug_a','deadbug_b'], FRAME.floor, true];
 IMGMAP['scene:celebrate'] = [() => 'celebrate', ['celebrate'], FRAME.stand];
+/* Real-movement videos for the Latihan cards (AI-generated from our own pictures, about 50-130 KB each) */
+const VIDMAP = { 'punch:1':'vid_jab', 'punch:2':'vid_straight', 'ex:goblet':'vid_goblet', 'move:march':'vid_march' };
+const vidObs = 'IntersectionObserver' in window ? new IntersectionObserver(ents => ents.forEach(en => {
+  const v = en.target;
+  if (en.isIntersecting) { if (!v.src) v.src = v.dataset.src; if (MOTION && !v.dataset.paused) v.play().catch(() => {}); }
+  else v.pause();
+}), { rootMargin:'80px' }) : null;
+function mountVideo(host, key) {
+  const v = document.createElement('video');
+  const pics = IMGMAP[key] ? IMGMAP[key][1] : [];
+  v.className = 'vidfig' + (key.startsWith('punch:') ? ' tall' : '');
+  v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
+  v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+  v.dataset.src = 'img/video/' + VIDMAP[key] + '.mp4';
+  if (pics.length && FIGIMG[pics[0]]) v.poster = FIGIMG[pics[0]];
+  const label = host.dataset.label; if (label) v.setAttribute('aria-label', label + ', video'); else v.setAttribute('aria-hidden', 'true');
+  v.addEventListener('click', () => { if (!v.src) v.src = v.dataset.src; if (v.paused) { delete v.dataset.paused; v.play().catch(() => {}); } else { v.dataset.paused = '1'; v.pause(); } });
+  host.classList.add('has-vid'); host.appendChild(v);
+  if (vidObs) vidObs.observe(v); else { v.src = v.dataset.src; if (MOTION) v.play().catch(() => {}); }
+}
 /* Setup wizard and goal pictures (the ruler and heartbeat drawings sit on top of the photo) */
 IMGMAP['scene:about'] = [() => 'stand', ['stand'], FRAME.stand];
 IMGMAP['scene:health'] = [twoMove('breathe', 'mv_breathe_a', 'mv_breathe_b'), ['mv_breathe_a','mv_breathe_b'], FRAME.stand, true];

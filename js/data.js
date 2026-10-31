@@ -270,7 +270,8 @@ function framesFor(kind, id) {
 function mountFigs(root) {
   FIGMAP.forEach((a, el) => { if (!el.isConnected) { stopAnim(a); if (io) io.unobserve(el); FIGMAP.delete(el); } });
   root.querySelectorAll('[data-fig]').forEach(el => {
-    if (FIGMAP.has(el)) return;
+    if (FIGMAP.has(el) || el.classList.contains('has-vid')) return;
+    if (VIDMAP[el.dataset.fig] && el.closest('#v-workouts')) { mountVideo(el, el.dataset.fig); return; }
     const [kind, id] = el.dataset.fig.split(':'), fr = framesFor(kind, id);
     const a = new Anim(makeFig(el, el.dataset.label || '', fr.deco, kind + ':' + id, el.hasAttribute('data-glow')), fr.f, fr.seg, fr.hold, true);
     FIGMAP.set(el, a); if (io) io.observe(el); else play(a);

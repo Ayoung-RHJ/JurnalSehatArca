@@ -402,7 +402,7 @@ function renderToday() {
       ${dTags.length ? `<div class="dtags">${tagHTML(dTags)}</div>` : ''}
       ${dInfo.fasting && !doneToday ? `<p class="small tc-fast">${fastTip(p)}</p>` : ''}
       <div class="tc-coach">${coachAv()}<p>${coachMsg(ses)}</p></div>
-      <button class="btn ${ses ? 'primary' : 'ghost'} block" data-start="${s.type}">${I('play')}${ses ? tt('Start today’s session','Mulai sesi hari ini') : tt('Start mobility','Mulai mobilitas')}</button></section>`;
+      <button class="btn ${ses ? 'primary' : 'ghost'} block" data-start="${s.type}">${I('play')}${ses ? tt('Start today’s session','Mulai sesi hari ini') : tt('Start mobility','Mulai mobilitas')}</button>${wrapLinkHTML(s.type)}</section>`;
   $('#v-home').innerHTML = `
     <div class="hello"><div class="hello-txt"><p class="hello-date">${dayName(now.getDay())}, ${niceDate(now)}</p><h1 class="hello-t">${hi}, ${esc(p.name)}</h1></div>
       <button class="hello-av" data-who aria-label="${tt('Switch person','Ganti orang')}">${avatarSVG({ sex:p.sex, color:PCOLORS[(me.color || 0) % PCOLORS.length], age:p.age })}</button></div>
@@ -462,7 +462,7 @@ function renderPlan() {
         <div><strong>${t ? L(TYPES[t].n) : tt('Rest','Istirahat')}</strong><small>${t ? TYPES[t].g.map(g => L(GNAME[g])).concat(s && s.box ? [tt('boxing','tinju')] : []).join(', ') : tt('Recover, walk, stretch','Pulih, jalan santai, peregangan')}</small></div><em>${s ? s.min + ' ' + tt('min','mnt') : ''}</em></button>`; }).join('')}</div>
     <div class="session preview">${ses ? `<div class="h3">${dayName(PLANSEL)}: ${ses.name}</div>${blocksHTML(ses)}
       ${ses.ex.length ? `<ol>${ses.ex.map(e => `<li>${L(EX[e.id].n)} <small>${e.sets} × ${e.secs ? e.secs + ' ' + tt('s','dtk') : e.reps + (EX[e.id].side ? tt(' each side',' per sisi') : '')}${e.kg && EX[e.id].sz ? ', ' + e.kg + ' kg' : ''}</small></li>`).join('')}</ol>` : ''}
-      <button class="btn primary block" data-start="${ses.type}">${tt('Start this session','Mulai sesi ini')}</button>`
+      <button class="btn primary block" data-start="${ses.type}">${tt('Start this session','Mulai sesi ini')}</button>${wrapLinkHTML(ses.type)}`
       : `<div class="h3">${dayName(PLANSEL)}: ${tt('rest','istirahat')}</div><p>${tt('Rest days are part of the plan. Muscles repair and get stronger between sessions.','Hari istirahat adalah bagian dari program. Otot memperbaiki diri dan makin kuat di antara sesi.')}</p><button class="btn ghost block" data-start="MOB">${tt('Start a mobility session','Mulai sesi mobilitas')}</button>`}</div>
     <h2 class="h2">${tt('Recovery check','Cek pemulihan')}</h2>
     <div class="table-wrap"><table class="rec"><thead><tr><th>${tt('Muscles','Otot')}</th>${DOW.map(d => `<th>${dayLetter(d)}</th>`).join('')}</tr></thead><tbody>${rec}</tbody></table></div>
@@ -477,6 +477,7 @@ function renderLearn() {
     <h1 class="h1">${tt('Workouts','Latihan')}</h1><p class="lede">${tt('Quick sessions, your own workouts, and every move your coach will ask for. Watch the figure, then copy it slowly in front of a mirror.','Sesi singkat, latihanmu sendiri, dan semua gerakan yang akan diminta pelatih. Perhatikan gambarnya, lalu tiru pelan-pelan di depan cermin.')}</p>
     ${quickHTML()}${mywHTML()}
     <h2 class="h2" style="margin-top:34px">${tt('Move library','Pustaka gerakan')}</h2>
+    ${wrapCardHTML()}
     <h2 class="h2">${tt('Stance','Kuda-kuda')}</h2>
     <div class="card"><div class="duo">${figHost('move', 'stance', L(MOVES.stance.n), '', true)}${feetSVG(st)}</div><p>${L(MOVES.stance.cue)}</p><p class="small">${tt('You box','Kamu memakai')} ${st}. ${tt('Change this in Me.','Ubah di menu Saya.')}</p></div>
     <h2 class="h2">${tt('Punches','Pukulan')}</h2><p class="lede">${tt('Coaches call combos by number. Odd numbers are your lead hand, even numbers your rear hand.','Pelatih memanggil kombo dengan angka. Angka ganjil untuk tangan depan, angka genap untuk tangan belakang.')}</p>
